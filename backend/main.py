@@ -12,6 +12,35 @@ from datetime import datetime
 
 app = FastAPI(title="AI-Powered Service Desk API")
 
+@app.on_event("startup")
+def on_startup():
+    db_file = "service_desk.db"
+    db_exists = os.path.exists(db_file)
+    db_has_data = False
+    
+    if db_exists:
+        try:
+            import sqlite3
+            conn = sqlite3.connect(db_file)
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(*) FROM users")
+            count = cursor.fetchone()[0]
+            if count > 0:
+                db_has_data = True
+            conn.close()
+        except Exception:
+            db_has_data = False
+
+    if not db_exists or not db_has_data:
+        print("Database file missing or empty. Auto-seeding database...")
+        import seed_db
+        try:
+            seed_db.download_and_seed()
+            print("Database auto-seeded successfully on startup.")
+        except Exception as e:
+            print(f"Failed to auto-seed database: {e}")
+
+
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
