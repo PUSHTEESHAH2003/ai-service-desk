@@ -17,6 +17,16 @@ files = {
 def create_schema(conn):
     cursor = conn.cursor()
     
+    # Drop tables if they exist to allow clean seeding even if file is locked
+    cursor.execute("DROP TABLE IF EXISTS users")
+    cursor.execute("DROP TABLE IF EXISTS comments")
+    cursor.execute("DROP TABLE IF EXISTS sla_breaches")
+    cursor.execute("DROP TABLE IF EXISTS tickets")
+    cursor.execute("DROP TABLE IF EXISTS knowledge_base")
+    cursor.execute("DROP TABLE IF EXISTS categories")
+    cursor.execute("DROP TABLE IF EXISTS agents")
+    conn.commit()
+    
     # 1. Agents Table
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS agents (
@@ -117,7 +127,10 @@ def create_schema(conn):
 def download_and_seed():
     if os.path.exists(DB_PATH):
         print(f"Database already exists at {DB_PATH}. Removing to reseed...")
-        os.remove(DB_PATH)
+        try:
+            os.remove(DB_PATH)
+        except Exception as e:
+            print(f"Database file is currently locked/in use ({e}). Proceeding to overwrite tables directly...")
         
     conn = sqlite3.connect(DB_PATH)
     create_schema(conn)
