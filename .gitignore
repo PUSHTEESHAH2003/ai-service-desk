@@ -1,0 +1,22 @@
+# Node dependencies
+**/node_modules/
+**/dist/
+.env
+.env.*
+
+# Python caching & virtual environments
+**/__pycache__/
+*.pyc
+.venv/
+env/
+venv/
+
+# Database files
+backend/service_desk.db
+
+# IDE & OS files
+.vscode/
+.idea/
+.gemini/
+.DS_Store
+Thumbs.db
