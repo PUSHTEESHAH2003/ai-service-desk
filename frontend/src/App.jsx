@@ -8,8 +8,10 @@ import {
   Sparkles,
   ShieldCheck,
   ShieldAlert,
-  LogOut
+  LogOut,
+  Lock
 } from 'lucide-react';
+
 
 import Dashboard from './components/Dashboard';
 import TicketList from './components/TicketList';
@@ -18,6 +20,7 @@ import SubmitTicket from './components/SubmitTicket';
 import KnowledgeBase from './components/KnowledgeBase';
 import Settings from './components/Settings';
 import AuthScreen from './components/AuthScreen';
+import BlockchainLedger from './components/BlockchainLedger';
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState(() => {
@@ -111,6 +114,15 @@ export default function App() {
             >
               <BookOpen size={18} /> Knowledge Base
             </div>
+
+            {currentUser.role === 'technical_head' && (
+              <div 
+                className={`nav-item ${activeTab === 'ledger' ? 'active' : ''}`}
+                onClick={() => handleTabChange('ledger')}
+              >
+                <Lock size={18} /> Audit Ledger
+              </div>
+            )}
           </nav>
         </div>
 
@@ -203,6 +215,10 @@ export default function App() {
             
             {activeTab === 'kb' && (
               <KnowledgeBase />
+            )}
+            
+            {activeTab === 'ledger' && currentUser.role === 'technical_head' && (
+              <BlockchainLedger />
             )}
             
             {activeTab === 'settings' && currentUser.role === 'technical_head' && (

@@ -8,6 +8,12 @@ from pydantic import BaseModel
 from typing import Optional, List
 import database as db
 from datetime import datetime
+from blockchain import Blockchain
+
+def get_active_blockchain() -> Blockchain:
+    blocks = db.get_blockchain_ledger()
+    return Blockchain(existing_blocks=blocks)
+
 
 
 app = FastAPI(title="AI-Powered Service Desk API")
@@ -376,6 +382,22 @@ def create_ticket(ticket: TicketCreate):
         outage_related=ticket.outage_related,
         requester_email=ticket.requester_email
     )
+    
+    # Log event on Blockchain
+    try:
+        blockchain = get_active_blockchain()
+        event_data = {
+            "event": "TICKET_CREATED",
+            "ticket_id": ticket_id,
+            "summary": ticket.summary,
+            "priority": ticket.priority,
+            "requester_department": ticket.requester_department
+        }
+        new_block = blockchain.add_block(event_data)
+        db.write_block(new_block)
+    except Exception as e:
+        print(f"Blockchain logging failed during ticket creation: {e}")
+        
     return {"ticket_id": ticket_id, "message": "Ticket created successfully. AI analysis pending."}
 
 @app.put("/api/tickets/{ticket_id}")
@@ -391,6 +413,20 @@ def update_ticket(ticket_id: int, ticket_update: TicketUpdate):
     success = db.update_ticket(ticket_id, updates)
     if not success:
         raise HTTPException(status_code=404, detail="Ticket not found or no changes made.")
+        
+    # Log event on Blockchain
+    try:
+        blockchain = get_active_blockchain()
+        event_data = {
+            "event": "TICKET_UPDATED",
+            "ticket_id": ticket_id,
+            "updates": updates
+        }
+        new_block = blockchain.add_block(event_data)
+        db.write_block(new_block)
+    except Exception as e:
+        print(f"Blockchain logging failed during ticket update: {e}")
+        
     return {"message": "Ticket updated successfully."}
 
 @app.post("/api/tickets/{ticket_id}/comments", status_code=201)
@@ -402,6 +438,22 @@ def add_comment(ticket_id: int, comment: CommentCreate):
         visibility=comment.visibility,
         team=comment.team
     )
+    
+    # Log event on Blockchain
+    try:
+        blockchain = get_active_blockchain()
+        event_data = {
+            "event": "COMMENT_ADDED",
+            "ticket_id": ticket_id,
+            "comment_id": comment_id,
+            "team": comment.team,
+            "visibility": comment.visibility
+        }
+        new_block = blockchain.add_block(event_data)
+        db.write_block(new_block)
+    except Exception as e:
+        print(f"Blockchain logging failed during comment addition: {e}")
+        
     return {"comment_id": comment_id, "message": "Comment added successfully."}
 
 @app.post("/api/tickets/{ticket_id}/analyze")
@@ -630,6 +682,45 @@ def analyze_draft(request: DraftAnalyzeRequest, x_api_key: Optional[str] = Heade
             "requester_department": mock_res.get("requester_department", "IT"),
             "is_mock": True
         }
+
+@app.get("/api/blockchain")
+def get_blockchain():
+    try:
+        blockchain = get_active_blockchain()
+        is_valid, reason = blockchain.is_chain_valid()
+        
+        blocks_output = []
+        for b in blockchain.chain:
+            blocks_output.append({
+                "index": b.index,
+                "timestamp": b.timestamp,
+                "data": b.data,
+                "previous_hash": b.previous_hash,
+                "hash": b.hash
+            })
+            
+        return {
+            "valid": is_valid,
+            "status": reason,
+            "height": len(blockchain.chain),
+            "chain": blocks_output
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/blockchain/verify")
+def verify_blockchain():
+    try:
+        blockchain = get_active_blockchain()
+        is_valid, reason = blockchain.is_chain_valid()
+        return {
+            "valid": is_valid,
+            "status": reason,
+            "height": len(blockchain.chain)
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 if __name__ == "__main__":
     import uvicorn

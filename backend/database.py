@@ -324,3 +324,37 @@ def get_user_by_email(email):
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM users WHERE email = ?", (email,))
         return to_dict(cursor.fetchone())
+
+# --- Blockchain Ledger Operations ---
+
+import json
+from blockchain import Block
+
+def get_blockchain_ledger():
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM blockchain_ledger ORDER BY block_index ASC")
+        rows = cursor.fetchall()
+        
+        blocks = []
+        for r in rows:
+            blocks.append(Block(
+                index=r["block_index"],
+                timestamp=r["timestamp"],
+                data=json.loads(r["data"]),
+                previous_hash=r["previous_hash"],
+                block_hash=r["block_hash"]
+            ))
+        return blocks
+
+def write_block(block):
+    with get_db_connection() as conn:
+        cursor = conn.cursor()
+        data_str = json.dumps(block.data, sort_keys=True)
+        cursor.execute("""
+            INSERT INTO blockchain_ledger (block_index, timestamp, data, previous_hash, block_hash)
+            VALUES (?, ?, ?, ?, ?)
+        """, (block.index, block.timestamp, data_str, block.previous_hash, block.hash))
+        conn.commit()
+        return block.index
+
