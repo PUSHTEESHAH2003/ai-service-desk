@@ -7,6 +7,8 @@ A modern, high-fidelity support incident management web application. Built for I
 ## 🌐 Deployed Live Demos
 * **Frontend Web Application (Vercel)**: [https://ai-service-desk-official.vercel.app](https://ai-service-desk-official.vercel.app)
 * **Backend API Service (Render)**: [https://ai-service-desk-api.onrender.com](https://ai-service-desk-api.onrender.com)
+  * **Interactive API Documentation (Swagger UI)**: [https://ai-service-desk-api.onrender.com/docs](https://ai-service-desk-api.onrender.com/docs)
+
 
 ---
 
