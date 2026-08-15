@@ -8,10 +8,8 @@ import {
   Sparkles,
   ShieldCheck,
   ShieldAlert,
-  LogOut,
-  Lock
+  LogOut
 } from 'lucide-react';
-
 
 import Dashboard from './components/Dashboard';
 import TicketList from './components/TicketList';
@@ -20,7 +18,6 @@ import SubmitTicket from './components/SubmitTicket';
 import KnowledgeBase from './components/KnowledgeBase';
 import Settings from './components/Settings';
 import AuthScreen from './components/AuthScreen';
-import BlockchainLedger from './components/BlockchainLedger';
 
 export default function App() {
   const [currentUser, setCurrentUser] = useState(() => {
@@ -76,7 +73,18 @@ export default function App() {
 
   return (
     <div className="app-container">
-      {/* Sidebar Navigation */}
+      {/* Mobile Header */}
+      <header className="mobile-header">
+        <div className="brand">
+          <div className="brand-icon">IT</div>
+          <div className="brand-title">DIGIPLUS IT</div>
+        </div>
+        <button className="mobile-logout-btn" onClick={handleLogout} title={`Sign Out (${currentUser.name.split(' ')[0]})`}>
+          <LogOut size={18} />
+        </button>
+      </header>
+
+      {/* Sidebar Navigation (Desktop) */}
       <aside className="sidebar">
         <div>
           <div className="brand">
@@ -114,15 +122,6 @@ export default function App() {
             >
               <BookOpen size={18} /> Knowledge Base
             </div>
-
-            {currentUser.role === 'technical_head' && (
-              <div 
-                className={`nav-item ${activeTab === 'ledger' ? 'active' : ''}`}
-                onClick={() => handleTabChange('ledger')}
-              >
-                <Lock size={18} /> Audit Ledger
-              </div>
-            )}
           </nav>
         </div>
 
@@ -217,10 +216,6 @@ export default function App() {
               <KnowledgeBase />
             )}
             
-            {activeTab === 'ledger' && currentUser.role === 'technical_head' && (
-              <BlockchainLedger />
-            )}
-            
             {activeTab === 'settings' && currentUser.role === 'technical_head' && (
               <Settings 
                 apiKey={apiKey} 
@@ -230,6 +225,54 @@ export default function App() {
           </>
         )}
       </main>
+
+      {/* Mobile Bottom Navigation */}
+      <nav className="mobile-nav">
+        {currentUser.role === 'technical_head' && (
+          <div 
+            className={`mobile-nav-item ${activeTab === 'dashboard' && !selectedTicketId ? 'active' : ''}`}
+            onClick={() => handleTabChange('dashboard')}
+          >
+            <BarChart3 size={20} />
+            <span>Dashboard</span>
+          </div>
+        )}
+        
+        <div 
+          className={`mobile-nav-item ${(activeTab === 'tickets' || selectedTicketId) ? 'active' : ''}`}
+          onClick={() => handleTabChange('tickets')}
+        >
+          <Layers size={20} />
+          <span>Workbench</span>
+        </div>
+        
+        <div 
+          className={`mobile-nav-item ${activeTab === 'submit' ? 'active' : ''}`}
+          onClick={() => handleTabChange('submit')}
+        >
+          <PlusCircle size={20} />
+          <span>Submit</span>
+        </div>
+        
+        <div 
+          className={`mobile-nav-item ${activeTab === 'kb' ? 'active' : ''}`}
+          onClick={() => handleTabChange('kb')}
+        >
+          <BookOpen size={20} />
+          <span>KB</span>
+        </div>
+
+        {currentUser.role === 'technical_head' && (
+          <div 
+            className={`mobile-nav-item ${activeTab === 'settings' ? 'active' : ''}`}
+            onClick={() => handleTabChange('settings')}
+          >
+            <GearIcon size={20} />
+            <span>Control</span>
+          </div>
+        )}
+      </nav>
     </div>
   );
+
 }
