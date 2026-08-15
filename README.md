@@ -21,6 +21,7 @@ A modern, high-fidelity support incident management web application. Built for I
    * **Windows Lock Resolution**: Wrapped file deletion in a try-except block and implemented SQL `DROP TABLE IF EXISTS` logic. This prevents Windows file-lock permission crashes (`WinError 32`) during auto-seeding.
    * **Render Free Tier Support**: Added path checking to fallback to the local folder (`service_desk.db`) if `/data` (where Render paid persistent disks reside) is missing or unwritable.
 5. **Mobile Top Header & Bottom Tab Bar**: Fully responsive layout optimization. On screens narrower than `1024px`, the app hides the desktop sidebar and introduces a native-like fixed top header (with brand name & logout button) and bottom tab navigation (Dashboard, Workbench, Submit, KB, Control) for mobile devices.
+6. **Mobile-Only Information Tooltip**: To optimize space, the static "Natural Language AI" info card was removed from the desktop sidebar. Instead, it was replaced by a mobile-only info (`i`) tooltip placed directly next to the "Pre-Analyze Description" button, visible only on mobile viewports to guide users on tap.
 
 ---
 
