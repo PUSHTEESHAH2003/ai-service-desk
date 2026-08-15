@@ -4,6 +4,25 @@ A modern, high-fidelity support incident management web application. Built for I
 
 ---
 
+## 🌐 Deployed Live Demos
+* **Frontend Web Application (Vercel)**: [https://ai-service-desk-official.vercel.app](https://ai-service-desk-official.vercel.app)
+* **Backend API Service (Render)**: [https://ai-service-desk-api.onrender.com](https://ai-service-desk-api.onrender.com)
+
+---
+
+## ✨ Key Custom Additions & Overhaul Details
+1. **Interactive Cyber-HUD Visual Theme**: Re-engineered the typography (using `JetBrains Mono`), layout, and color palettes to design a premium dark sci-fi HUD theme. Features glowing accents, neon status badges, and dynamic bracket containers (`::before` / `::after` on `.card` elements) that expand on hover.
+2. **Blurred Wallpaper Backdrop**: Decoupled the high-resolution tech background wallpaper into a fixed background layer with `filter: blur(8px); transform: scale(1.02); z-index: -1;` ensuring all foreground dashboard text is 100% sharp and easy to read.
+3. **Scroll-Driven Reveal Animations**: Hardware-accelerated entry transitions using `animation-timeline: view()` and `animation-range: entry 5% cover 25%` that scale and fade elements in smoothly as they scroll into view.
+4. **Self-Healing Database & Multi-Environment Support**:
+   * **Auto-Seeding**: The backend automatically detects empty or missing databases on startup and downloads the Hugging Face dataset dynamically—enabling true "plug-and-play" setups.
+   * **Windows Lock Resolution**: Wrapped file deletion in a try-except block and implemented SQL `DROP TABLE IF EXISTS` logic. This prevents Windows file-lock permission crashes (`WinError 32`) during auto-seeding.
+   * **Render Free Tier Support**: Added path checking to fallback to the local folder (`service_desk.db`) if `/data` (where Render paid persistent disks reside) is missing or unwritable.
+5. **Mobile Top Header & Bottom Tab Bar**: Fully responsive layout optimization. On screens narrower than `1024px`, the app hides the desktop sidebar and introduces a native-like fixed top header (with brand name & logout button) and bottom tab navigation (Dashboard, Workbench, Submit, KB, Control) for mobile devices.
+
+---
+
+
 ## 🛠️ Technology Stack & Architecture
 
 - **Backend**: FastAPI (Python 3.14+)
