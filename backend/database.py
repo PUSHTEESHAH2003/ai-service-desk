@@ -3,7 +3,12 @@ import hashlib
 from datetime import datetime
 
 import os
-DB_PATH = "/data/service_desk.db" if os.environ.get("RENDER") else "service_desk.db"
+# Use persistent disk if available on Render; otherwise fall back to local directory (e.g. Free Tier)
+if os.environ.get("RENDER") and os.path.exists("/data") and os.access("/data", os.W_OK):
+    DB_PATH = "/data/service_desk.db"
+else:
+    DB_PATH = "service_desk.db"
+
 
 
 def get_db_connection():

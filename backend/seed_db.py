@@ -3,7 +3,8 @@ import sqlite3
 import pandas as pd
 import requests
 
-DB_PATH = "/data/service_desk.db" if os.environ.get("RENDER") else "service_desk.db"
+DB_PATH = "/data/service_desk.db" if (os.environ.get("RENDER") and os.path.exists("/data") and os.access("/data", os.W_OK)) else "service_desk.db"
+
 
 BASE_URL = "https://huggingface.co/datasets/mindweave/help-desk-tickets/resolve/main/data/"
 
