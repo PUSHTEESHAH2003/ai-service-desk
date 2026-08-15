@@ -3,7 +3,8 @@ import sqlite3
 import pandas as pd
 import requests
 
-DB_PATH = "service_desk.db"
+DB_PATH = "/data/service_desk.db" if os.environ.get("RENDER") else "service_desk.db"
+
 BASE_URL = "https://huggingface.co/datasets/mindweave/help-desk-tickets/resolve/main/data/"
 
 files = {
@@ -18,7 +19,6 @@ def create_schema(conn):
     cursor = conn.cursor()
     
     # Drop tables if they exist to allow clean seeding even if file is locked
-    cursor.execute("DROP TABLE IF EXISTS blockchain_ledger")
     cursor.execute("DROP TABLE IF EXISTS users")
     cursor.execute("DROP TABLE IF EXISTS comments")
     cursor.execute("DROP TABLE IF EXISTS sla_breaches")
@@ -120,16 +120,6 @@ def create_schema(conn):
         department TEXT NOT NULL,
         contact_number TEXT,
         role TEXT NOT NULL DEFAULT 'user'
-    )""")
-    
-    # 8. Blockchain Ledger Table
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS blockchain_ledger (
-        block_index INTEGER PRIMARY KEY,
-        timestamp REAL NOT NULL,
-        data TEXT NOT NULL,
-        previous_hash TEXT NOT NULL,
-        block_hash TEXT NOT NULL
     )""")
     
     conn.commit()
@@ -292,19 +282,6 @@ def download_and_seed():
         )
     conn.commit()
     print("Knowledge base seeded successfully.")
-    
-    # Seed Genesis Block
-    print("Seeding Genesis Block to Blockchain ledger...")
-    import json
-    from blockchain import Blockchain
-    blockchain = Blockchain()
-    genesis = blockchain.chain[0]
-    cursor.execute("""
-        INSERT INTO blockchain_ledger (block_index, timestamp, data, previous_hash, block_hash)
-        VALUES (?, ?, ?, ?, ?)
-    """, (genesis.index, genesis.timestamp, json.dumps(genesis.data), genesis.previous_hash, genesis.hash))
-    conn.commit()
-    print("Genesis Block seeded successfully.")
     
     # Verification logs
     print("-" * 30)
