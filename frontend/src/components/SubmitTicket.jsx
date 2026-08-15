@@ -162,7 +162,16 @@ export default function SubmitTicket({ onTicketCreated, apiKey, currentUser }) {
               className="form-textarea"
               required
             ></textarea>
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '6px' }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '8px', marginTop: '6px' }}>
+              <span className="tooltip-container mobile-only-info">
+                <Info size={14} style={{ color: 'var(--text-secondary)', cursor: 'help' }} />
+                <span className="tooltip-text" style={{ textTransform: 'none' }}>
+                  <strong style={{ color: '#fff', fontSize: '0.85rem' }}>Natural Language AI</strong>
+                  <div style={{ marginTop: '6px', fontSize: '0.8rem', lineHeight: '1.4', fontWeight: 'normal' }}>
+                    Click "Pre-Analyze Description" to run a local pattern-matching model. It scans your issue text and recommends categories and priority levels automatically.
+                  </div>
+                </span>
+              </span>
               <button 
                 type="button" 
                 className="btn btn-secondary" 
