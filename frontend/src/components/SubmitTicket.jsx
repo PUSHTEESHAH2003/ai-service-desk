@@ -303,17 +303,6 @@ export default function SubmitTicket({ onTicketCreated, apiKey, currentUser }) {
             </div>
           )}
 
-          {!aiLoading && !aiPreview && (
-            <div className="card" style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-              <h4 style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-secondary)' }}>
-                <FileText size={16} />
-                Natural Language AI
-              </h4>
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.82rem' }}>
-                Click "Pre-Analyze Description" to run a local pattern-matching model. It scans your issue text and recommends categories and priority levels automatically.
-              </p>
-            </div>
-          )}
         </div>
       </div>
     </div>
